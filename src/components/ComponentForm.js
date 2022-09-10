@@ -1,10 +1,9 @@
-import React, {useEffect, useState, useReducer} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useForm} from 'react-hook-form';
-import * as trialComponents from "../pipeComponents/trialComponents";
 import {components, componentDesc} from "../pipeComponents/components";
 import {useSelector, useDispatch} from 'react-redux';
-import {create, updateData, insertAfter, insertBefore, switchAfter, switchBefore, deleteNode, deleteAllNodes} from '../redux/nodeSlice';
-import {update, nodeNotClicked, nodeClicked, resetSelection} from '../redux/selectionSlice';
+import {create, updateData, insertAfter, insertBefore, switchAfter, switchBefore, deleteNode} from '../redux/nodeSlice';
+import {update, nodeNotClicked, nodeClicked} from '../redux/selectionSlice';
 import Triangle from "./Triangle"
 
 const ComponentForm = (props) => {
@@ -18,7 +17,6 @@ const ComponentForm = (props) => {
   let reqInput = selectedComponent.reqInput;
 
   const getForm = (selection, nodeState, reqInput) => {
-    let form = [];
     let formData = (selection.update && !selection.tempNode && !nodeState.deleting)? nodeState.nodeList[selection.nodeNumber].fieldData : null;
     let formCSS = "bg-gray-100 border-gray-200 border-[1px] rounded text-black font-light text-[12px] pl-1"
     let formCSSDisabled = "border-gray-200 border-[1px] rounded bg-gray-200/[.2] text-gray-300 font-light text-[12px] pl-1"
@@ -36,7 +34,7 @@ const ComponentForm = (props) => {
       if (!selection.nodeSelected) {
         defaultValue = {defaultValue: null};
       }
-      if ((key == 'cmhMainIn') && selection.tempNode && selection.connection.toNew) {
+      if ((key === 'cmhMainIn') && selection.tempNode && selection.connection.toNew) {
         let parentNode = nodeState.nodeList[selection.nodeNumber];
         let parentBranch = selection.connection.branch
         defaultValue.defaultValue = parentNode.fieldData[parentBranch];

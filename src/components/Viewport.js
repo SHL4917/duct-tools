@@ -7,7 +7,7 @@ import Results from './Results';
 class Viewport extends React.Component {
   render() {
     return (
-      <div className="grow flex flex-col">
+      <div className="grow flex flex-col overflow-hidden">
         <Tabs>
           <div label="Nodes">
             <NodeDrawing />

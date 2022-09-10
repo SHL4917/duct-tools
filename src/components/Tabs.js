@@ -22,7 +22,7 @@ class Tabs extends React.Component {
     } = this;
 
     return (
-      <div className="grow flex flex-col">
+      <div className="grow flex flex-col overflow-hidden">
         <ol className="grow-0 flex flex-row px-5">
           {children.map((child) => {
             const { label } = child.props;
@@ -38,7 +38,7 @@ class Tabs extends React.Component {
           })}
         </ol>
         <div className="border-t-[1px] border-gray-200"></div>
-        <div className="grow rounded-xl">
+        <div className="grow overflow-auto">
           {children.map((child) => {
             if (child.props.label !== activeTab) return undefined;
             return child.props.children;

@@ -1,7 +1,8 @@
-import React from "react";
+import React, {useState} from "react";
 import {useSelector, useDispatch} from 'react-redux';
 import { convertToDrawing } from "../functions/utils";
 import {components} from "../pipeComponents/components";
+import {updatePaths, resetPaths} from '../redux/ductPathSlice';
 
 const getStateWithTempNodes = (nodeState, components) => {
   let {nodes, edges} = convertToDrawing(nodeState, components);
@@ -54,8 +55,21 @@ const getEdgeFromNode = (node, edges, branch) => {
   return null;
 }
 
+const getPressureLoss = (pathway, nodeState, components) => {
+  let totalPressureDrop = 0;
+  let pressureDrop = [];
+  for (let comp of pathway) {
+    let nodeInfo = nodeState.nodeList[comp.node];
+    
+  }
+
+  return {totalPressureDrop, pressureDrop};
+}
+
 const Results = (props) => {
   const nodeState = useSelector((state) => state.node);
+  const ductPathState = useSelector((state) => state.ductPath)
+  const dispatch = useDispatch();
 
   const getPaths = () => {
     let {nodes, edges} = getStateWithTempNodes(nodeState, components)
@@ -72,13 +86,19 @@ const Results = (props) => {
       }
     }
     console.log(pathways);
+    dispatch(updatePaths({paths: pathways}))
   }
+
 
 
   
   return (
-    <div>
+    <div className="flex flex-col grow">
       <button onClick={getPaths}>Get Routes</button>
+      <div classname="whitespace-pre-wrap">{JSON.stringify(nodeState, null, 4)}</div>
+      <div className="whitespace-pre-wrap">
+        {JSON.stringify(ductPathState.paths, null, 4)}
+      </div>
     </div>
   );
 }
