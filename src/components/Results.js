@@ -2,12 +2,8 @@ import React, {useState} from "react";
 import {useSelector, useDispatch} from 'react-redux';
 import { convertToDrawing } from "../functions/utils";
 import {components} from "../pipeComponents/components";
-<<<<<<< HEAD
 import {updatePaths, resetPaths, updateDisplayData} from '../redux/ductPathSlice';
 import ResultTable from "./ResultTable"
-=======
-import {updatePaths, resetPaths} from '../redux/ductPathSlice';
->>>>>>> 26f64102955d1b168b0c55746cc4693fc4004a38
 
 const getStateWithTempNodes = (nodeState, components) => {
   let {nodes, edges} = convertToDrawing(nodeState, components);
@@ -60,7 +56,6 @@ const getEdgeFromNode = (node, edges, branch) => {
   return null;
 }
 
-<<<<<<< HEAD
 const getPressureLoss = (pathway, nodeState) => {
   let pressureDrop = [];
   for (let pathNode of pathway) {
@@ -76,16 +71,6 @@ const getPressureLoss = (pathway, nodeState) => {
     pressureDrop.push(nodeInfo.fieldData.hasOwnProperty(pressureField)? nodeInfo.fieldData[pressureField] : 0);
   }
   let totalPressureDrop = pressureDrop.reduce((acc, cv) => acc + cv, 0);
-=======
-const getPressureLoss = (pathway, nodeState, components) => {
-  let totalPressureDrop = 0;
-  let pressureDrop = [];
-  for (let comp of pathway) {
-    let nodeInfo = nodeState.nodeList[comp.node];
-    
-  }
-
->>>>>>> 26f64102955d1b168b0c55746cc4693fc4004a38
   return {totalPressureDrop, pressureDrop};
 }
 
@@ -96,10 +81,6 @@ const Results = (props) => {
 
   const getPaths = () => {
     let {nodes, edges} = getStateWithTempNodes(nodeState, components)
-<<<<<<< HEAD
-=======
-    console.log(edges);
->>>>>>> 26f64102955d1b168b0c55746cc4693fc4004a38
     let pathways = [];
     // results in form [[{node: x, out: "x", in: ""}, {}, ...], [], [], ...]
     // results[x] -> One unique pathway, with results[x][j] being a node in that unique pathway
@@ -111,7 +92,6 @@ const Results = (props) => {
         depthFirstSearch(nodeNumber, key, uniquePath, 0, pathways, nodes, edges);
       }
     }
-<<<<<<< HEAD
     dispatch(updatePaths({paths: pathways}))
     let tableData = [];
     for (let pathway of pathways) {
@@ -137,26 +117,11 @@ const Results = (props) => {
     })
     dispatch(updateDisplayData({displayData: tableData}))
   }
-=======
-    console.log(pathways);
-    dispatch(updatePaths({paths: pathways}))
-  }
-
-
-
->>>>>>> 26f64102955d1b168b0c55746cc4693fc4004a38
   
   return (
     <div className="flex flex-col grow">
       <button onClick={getPaths}>Get Routes</button>
-<<<<<<< HEAD
       <ResultTable displayData={ductPathState.displayData} />
-=======
-      <div classname="whitespace-pre-wrap">{JSON.stringify(nodeState, null, 4)}</div>
-      <div className="whitespace-pre-wrap">
-        {JSON.stringify(ductPathState.paths, null, 4)}
-      </div>
->>>>>>> 26f64102955d1b168b0c55746cc4693fc4004a38
     </div>
   );
 }
