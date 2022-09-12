@@ -306,9 +306,8 @@ const ComponentForm = (props) => {
               {form.results}
             </div>
           </div>
-          {/* {form} */}
         </form>
-        <button onClick={returnStates}>Check States</button>
+        {/* <button onClick={returnStates}>Check States</button> */}
       </div>
       <div className="flex flex-row border-t-[1px] border-gray-200 grow-0 w-[100%]">
         <div className="flex flex-row items-center px-3 py-1">

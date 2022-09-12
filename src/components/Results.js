@@ -5,6 +5,15 @@ import {components} from "../pipeComponents/components";
 import {updatePaths, resetPaths, updateDisplayData} from '../redux/ductPathSlice';
 import ResultTable from "./ResultTable"
 
+const branchMapping = {
+  cmhMainIn: "Main",
+  cmhSideIn: "Branch",
+  cmhSideIn2: "Branch 2",
+  cmhMainOut: "Main",
+  cmhSideOut: "Branch",
+  cmhSideOut2: "Branch 2",
+}
+
 const getStateWithTempNodes = (nodeState, components) => {
   let {nodes, edges} = convertToDrawing(nodeState, components);
     let nodesObj = {};
@@ -94,34 +103,42 @@ const Results = (props) => {
     }
     dispatch(updatePaths({paths: pathways}))
     let tableData = [];
+    let i = 1;
     for (let pathway of pathways) {
       let pathData = {};
       let {totalPressureDrop, pressureDrop} = getPressureLoss(pathway, nodeState);
-      pathData.totalPressureDrop = totalPressureDrop;
-      pathData.nodeData = []
+      pathData.pressureDrop = totalPressureDrop.toFixed(3);
+      pathData.nodeID = `Path ${i}`
+      pathData.subRows = []
       for (let pathNode of pathway) {
         let tempNodeInfo = {}
-        tempNodeInfo.nodeID = pathNode.nodeNumber;
+        tempNodeInfo.nodeID = pathNode.node;
         tempNodeInfo.comp = nodeState.nodeList[pathNode.node].compData
-        tempNodeInfo.in = pathNode.in;
+        tempNodeInfo.in = branchMapping.hasOwnProperty(pathNode.in)? branchMapping[pathNode.in] : pathNode.in;
         tempNodeInfo.inCMH = nodeState.nodeList[pathNode.node].fieldData[pathNode.in] ?? null;
-        tempNodeInfo.out = pathNode.out;
+        tempNodeInfo.out = branchMapping.hasOwnProperty(pathNode.out)? branchMapping[pathNode.out] : pathNode.out;
         tempNodeInfo.outCMH = nodeState.nodeList[pathNode.node].fieldData[pathNode.out] ?? null;
-        tempNodeInfo.pressureDrop = pressureDrop.shift();
-        pathData.nodeData.push(tempNodeInfo);
+        tempNodeInfo.pressureDrop = pressureDrop.shift().toFixed(3);
+        pathData.subRows.push(tempNodeInfo);
       }
       tableData.push(pathData);
+      i++;
     }
     tableData.sort((a, b) => {
-      return b.totalPressureDrop - a.totalPressureDrop;
+      return b.pressureDrop - a.pressureDrop;
     })
     dispatch(updateDisplayData({displayData: tableData}))
   }
   
   return (
     <div className="flex flex-col grow">
-      <button onClick={getPaths}>Get Routes</button>
-      <ResultTable displayData={ductPathState.displayData} />
+      <button 
+        onClick={getPaths} 
+        className="ml-8 font-medium text-[12px] text-white bg-orange-300 border-orange-300 border-[1px] rounded w-48 p-2 my-2"
+      >
+        Generate Path Results
+      </button>
+      {ductPathState.displayData? <ResultTable displayData={ductPathState.displayData} /> : null}
     </div>
   );
 }
