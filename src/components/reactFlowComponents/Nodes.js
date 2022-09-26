@@ -1,12 +1,12 @@
 import React from "react";
 import { Handle } from "react-flow-renderer";
 
-const baseStyle = 'px-3 py-1 font-serif rounded-sm text-xs'
+const baseStyle = 'px-3 py-1 font-medium rounded-sm text-xs border'
 
 const RectangleNode = ({ data }) => {
-  let handleStyle = { background: 'black', height: '5px', width: '5px', padding: '3px', borderColor: '#EBF6FF', borderWidth: '2px'  };
+  let handleStyle = { background: '#999999', height: '5px', width: '5px', padding: '3px', borderColor: '#FCFCFC', borderWidth: '2px'  };
   return (
-    <div className={`${baseStyle}  border border-[#000] bg-white-200 hover:border-red-300`}>
+    <div className={`${baseStyle} bg-gray-100 border-gray-500 text-gray-500 hover:border-orange-300 hover:text-orange-300`}>
       <Handle
         type="target"
         position="left"
@@ -23,9 +23,9 @@ const RectangleNode = ({ data }) => {
 };
 
 const RectangleNodeSelected = ({ data }) => {
-  let handleStyle = { background: 'black', height: '5px', width: '5px', padding: '3px', borderColor: '#EBF6FF', borderWidth: '2px'  };
+  let handleStyle = { background: '#FF7E33', height: '5px', width: '5px', padding: '3px', borderColor: '#FCFCFC', borderWidth: '2px'  };
   return (
-    <div className={`${baseStyle} bg-[#000] border border-white-200 text-white-200 hover:border-red-300`}>
+    <div className={`${baseStyle} bg-orange-300 border-orange-300 text-gray-100 hover:border-gray-500`}>
       <Handle
         type="target"
         position="left"
@@ -44,7 +44,7 @@ const RectangleNodeSelected = ({ data }) => {
 const UnknownNode = ({ data }) => {
   
   return (
-    <div className={`${baseStyle} border border-[#000] bg-white-200 border-dashed`}>
+    <div className={`${baseStyle} border-gray-400 text-gray-400 bg-white-100 border-dashed hover:border-gray-500 hover:text-gray-500`}>
       <Handle
         type="target"
         position="left"

@@ -37,7 +37,7 @@ function CustomEdge({
       <text>
         <textPath
           href={`#${id}`}
-          style={{ fontSize: '8px' }}
+          style={{ fontSize: '12px' }}
           startOffset="50%"
           textAnchor="middle"
         >

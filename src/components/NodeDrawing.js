@@ -10,23 +10,21 @@ import ReactFlow, {
   isNode,
 } from "react-flow-renderer";
 import { useSelector, useDispatch } from "react-redux";
-import { create, remove } from "../redux/nodeSlice";
 import { update, nodeClicked } from "../redux/selectionSlice";
 import dagre from "dagre";
 import { convertToDrawing } from "../functions/utils";
-import * as trialComponents from "../pipeComponents/trialComponents";
 import {components} from "../pipeComponents/components"; 
 import { nodeTypes } from "./reactFlowComponents/Nodes";
 import {edgeTypes} from './reactFlowComponents/Edges';
 
-const nodeWidth = 180;
-const nodeHeight = 50;
+const nodeWidth = 220;
+const nodeHeight = 70;
 
 const getLayoutedElements = (nodeState, components, direction = "LR") => {
   const dagreGraph = new dagre.graphlib.Graph();
   dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-  let { nodes: nodes, edges: edges } = convertToDrawing(
+  let { nodes, edges } = convertToDrawing(
     nodeState,
     components
   );

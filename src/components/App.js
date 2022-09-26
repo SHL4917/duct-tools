@@ -3,7 +3,7 @@ import Viewport from './Viewport';
 import ComponentList from './ComponentList';
 import ComponentCard from './ComponentCard';
 import {useSelector, useDispatch} from 'react-redux';
-import {update, nodeNotClicked} from '../redux/selectionSlice';
+import {nodeNotClicked} from '../redux/selectionSlice';
 // Use command 'npx gulp' after moving the script tag in the bundled html file to the end of the body!
 
 function App() {
