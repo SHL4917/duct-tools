@@ -417,4 +417,154 @@ const rectTeeToRound = new GenericComponent(
   },
 )
 
-export { straightRectDuct, rectElbowNoVanes, rectSmoothWye90Deg, rectTeeToRound};
+const rectButterflyDamper = new GenericComponent(
+  {
+    cmhMainOut: function(data, fields) {
+      return data.cmhMainIn;
+    },
+    velIn: function(data, fields) {
+      return (
+        data.cmhMainIn / 3600 / (data.widthIn * data.heightIn * 0.001 * 0.001)
+      );
+    },
+    velPresIn: function(data, fields) {
+      return 0.5 * 1.2 * fields.velIn(data, fields) ** 2;
+    },
+    lossCoeffMain: function(data, fields) {
+      let coeffData = [
+        [4.0e-2, 3.0e-1, 1.1, 3.0, 8.0, 2.3e1, 6.0e1, 1.0e2, 1.9e2, 9.999e3],
+        [4.0e-2, 3.0e-1, 1.1, 3.0, 8.0, 2.3e1, 6.0e1, 1.0e2, 1.9e2, 9.999e3],
+        [4.0e-2, 3.0e-1, 1.1, 3.0, 8.0, 2.3e1, 6.0e1, 1.0e2, 1.9e2, 9.999e3],
+        [
+          4.0e-2, 3.5e-1, 1.25, 3.6, 1.0e1, 2.9e1, 8.0e1, 1.55e2, 2.3e2,
+          9.999e3,
+        ],
+        [
+          4.0e-2, 3.5e-1, 1.25, 3.6, 1.0e1, 2.9e1, 8.0e1, 1.55e2, 2.3e2,
+          9.999e3,
+        ],
+      ];
+      let heightOverWidth = [0.1, 0.5, 1, 1.5, 2];
+      let damperAngle = [0, 10, 20, 30, 40, 50, 60, 75, 70, 90];
+      return interpolate2D(heightOverWidth, damperAngle, coeffData,
+        data.heightIn/data.widthIn, data.turnAngle);
+    },
+    pressureLossMain: function(data, fields) {
+      return (
+        fields.velPresIn(data, fields) * fields.lossCoeffMain(data, fields)
+      );
+    }
+  },
+  rectOneToOne,
+  {
+    cmhMainIn: true,
+    cmhMainOut: false,
+    widthIn: true,
+    heightIn: true,
+    velIn: false,
+    velPresIn: false,
+    lossCoeffMain: false,
+    pressureLossMain: false,
+    turnAngle: true,
+  },
+  {
+    title: "Butterfly Damper in Rectangular Duct CR9-1",
+    desc: "Placeholder, 90deg is fully shut, 0deg is fully open.",
+  }
+)
+
+const roundTaptoRectMain = new GenericComponent (
+  {
+    cmhMainOut: function(data, fields) {
+      return (data.cmhMainIn + data.cmhSideIn);
+    },
+    velIn: function(data, fields) {
+      return (
+        data.cmhMainIn / 3600 / (data.widthIn * data.heightIn * 0.001 * 0.001)
+      );
+    },
+    velOut: function(data, fields) {
+      return (
+        fields.cmhMainOut(data, fields) / 3600 / (data.widthIn * data.heightIn * 0.001 * 0.001)
+      );
+    },
+    velInSide: function(data, fields) {
+      return (
+        data.cmhSideIn / 3600 / (data.diameterInSide * data.diameterInSide * 0.0005 * 0.0005 * 3.14159)
+      );
+    },
+    velPresIn: function(data, fields) {
+      return 0.5 * 1.2 * fields.velIn(data, fields) ** 2;
+    },
+    velPresOut: function(data, fields) {
+      return 0.5 * 1.2 * fields.velOut(data, fields) ** 2;
+    },
+    velPresInSide: function(data, fields) {
+      return 0.5 * 1.2 * fields.velInSide(data, fields) ** 2;
+    },
+    lossCoeffSide: function(data, fields) {
+      let coeffData = [-14, -2.38, 0.5, 0.65, 1.03, 1.17, 1.19, 1.33, 1.51, 1.44];
+      let cmhSideOverOut = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0];
+      return interpolate1D(cmhSideOverOut, coeffData, data.cmhSideIn/fields.cmhMainOut(data, fields));
+    },
+    lossCoeffMain: function(data, fields) {
+      let coeffData = [
+        22.15, 11.91, 6.54, 3.74, 2.23, 1.33, 0.76, 0.38, 0.1, 0,
+      ];
+      let cmhMainOverOut = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0];
+      return interpolate1D(cmhMainOverOut, coeffData, data.cmhMainIn/fields.cmhMainOut(data, fields));
+    },
+    pressureLossMain: function(data, fields) {
+      return (
+        fields.velPresIn(data, fields) * fields.lossCoeffMain(data, fields)
+      );
+    },
+    pressureLossSide: function(data, fields) {
+      return (
+        fields.velPresInSide(data, fields) * fields.lossCoeffSide(data, fields)
+      );
+    }
+  },
+  {
+    roundIn: true,
+    roundOut: false,
+    rectIn: true,
+    rectOut: true,
+    ovalIn: false,
+    ovalOut: false,
+    oneInput: false,
+    oneOutput: true,
+    transition: false,
+  },
+  {
+    cmhMainIn: true,
+    cmhMainOut: false,
+    cmhSideIn: true,
+    velIn: false,
+    velOut: false,
+    velInSide: false,
+    velPresIn: false,
+    velPresOut: false,
+    velPresInSide: false,
+    widthIn: true,
+    heightIn: true,
+    diameterInSide: true,
+    lossCoeffMain: false,
+    lossCoeffSide: false,
+    pressureLossMain: false,
+    pressureLossSide: false,
+  },
+  {
+    title: "Converging Tee, Round Tap to Rect Main ER5-2",
+    desc: "Placeholder!"
+  }
+)
+
+export {
+  straightRectDuct,
+  rectElbowNoVanes,
+  rectSmoothWye90Deg,
+  rectTeeToRound,
+  rectButterflyDamper,
+  roundTaptoRectMain,
+};
