@@ -6,6 +6,26 @@ import {create, updateData, insertAfter, insertBefore, switchAfter, switchBefore
 import {update, nodeNotClicked, nodeClicked} from '../redux/selectionSlice';
 import Triangle from "./Triangle"
 
+const branchMap = {
+  cmhMainOut: {
+    widthIn: "widthOut",
+    heightIn: "heightOut",
+    diameterIn: "diameterOut",
+  },
+  cmhSideOut: {
+    widthIn: "widthOutSide",
+    heightIn: "heightOutSide",
+    diameterIn: "diameterOutSide",
+  },
+  cmhSideOut2: {
+    widthIn: "widthOutSide2",
+    heightIn: "heightOutSide2",
+    diameterIn: "diameterOutSide2",
+  },
+}
+
+const inputBranches = ["widthIn", "heightIn", "diameterIn"];
+
 const ComponentForm = (props) => {
   const {register, handleSubmit, unregister, reset} = useForm({shouldUnregister: true,});
   const nodeState = useSelector((state) => state.node);
@@ -13,6 +33,7 @@ const ComponentForm = (props) => {
   const dispatch = useDispatch();
   const [leftToggle, setLeftToggle] = useState(false);
   const [rightToggle, setRightToggle] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
   let selectedComponent = components[props.cardName];
   let reqInput = selectedComponent.reqInput;
 
@@ -39,10 +60,16 @@ const ComponentForm = (props) => {
         let parentBranch = selection.connection.branch
         defaultValue.defaultValue = parentNode.fieldData[parentBranch];
       }
+      if ((inputBranches.includes(key)) && selection.tempNode && selection.connection.toNew) {
+        let parentNode = nodeState.nodeList[selection.nodeNumber];
+        let parentBranch = selection.connection.branch
+        let outletBranch = branchMap[parentBranch][key];
+        defaultValue.defaultValue = parentNode.fieldData[outletBranch]?? parentNode.fieldData[key]?? null;
+      }
+
       let input = reqInput[key] ? (
         <input
           type="number"
-          placeholder={key}
           {...defaultValue}
           key={selection.tempNode ? key + selection.tempNode + props.cardName: key + props.cardName}
           {...register(key, { valueAsNumber: true, required: true })}
@@ -51,7 +78,6 @@ const ComponentForm = (props) => {
       ) : (
         <input
           type="number"
-          placeholder={key}
           {...defaultValue}
           key={selection.tempNode ? key + selection.tempNode + props.cardName: key + props.cardName}
           disabled
@@ -120,8 +146,11 @@ const ComponentForm = (props) => {
   }
 
   const returnStates = () => {
+    console.log("Node State:")
     console.log(nodeState);
+    console.log("Selection State:")
     console.log(selection);
+    console.log("Card State:")
     console.log(props.cardName);
   }
 
@@ -277,9 +306,16 @@ const ComponentForm = (props) => {
     <div className="flex flex-col h-[100%]">
       <div className="border-b-[1px] border-gray-200 flex flex-row px-4 py-2 items-center grow-0">
         <div className="font-medium text-[22px] mr-4">{selectedComponent.text.title}</div>
-        <div className="font-medium text-gray-300 text-center leading-4 rounded-full border-[1px] border-gray-300 text-[12px] w-4 h-4 select-none
-        hover:text-gray-400 hover:border-gray-400">
+        <div 
+          className="font-medium text-gray-300 text-center leading-4 rounded-full border-[1px] border-gray-300 text-[12px] w-4 h-4 select-none
+          hover:text-gray-400 hover:border-black"
+          onMouseEnter={() => setShowTooltip(true)}
+          onMouseLeave={() => setShowTooltip(false)}
+        >
           ?
+        </div>
+        <div style={{display: showTooltip ? 'block' : 'none' }} className="relative">
+          <div className="fixed bg-gray-100 border-gray-300 border-[1px] rounded p-1.5 w-[300px] shadow-card">{selectedComponent.text.desc}</div>
         </div>
       </div>
       <div className="grow overflow-auto">
@@ -307,7 +343,6 @@ const ComponentForm = (props) => {
             </div>
           </div>
         </form>
-        {/* <button onClick={returnStates}>Check States</button> */}
       </div>
       <div className="flex flex-row border-t-[1px] border-gray-200 grow-0 w-[100%]">
         <div className="flex flex-row items-center px-3 py-1">
@@ -393,6 +428,14 @@ const ComponentForm = (props) => {
                   className="font-light text-[10px] text-left disabled:text-gray-200"
                 >
                   Delete node
+                </button>
+                <div className="border-t-[1px] border-gray-200 my-1"></div>
+                <button 
+                  disabled={false}
+                  onClick={returnStates} 
+                  className="font-light text-[10px] text-left"
+                >
+                  Get States
                 </button>
               </div>
             </div>

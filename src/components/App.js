@@ -35,7 +35,7 @@ function App() {
             <div className="font-light text-[28px] text-gray-400 select-none">DUCT TOOLS</div>
             <div className="font-medium">To enter name + icon</div>
           </div>
-          <div className="grow p-4 overflow-auto">
+          <div className="grow py-4 px-2 overflow-auto">
             <ComponentList selectCard={selectCard} />
           </div>
         </div>

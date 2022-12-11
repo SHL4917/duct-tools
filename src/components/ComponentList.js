@@ -14,7 +14,7 @@ const ComponentList = (props) => {
   return (
     <ul>
       {keyList.map((key) => (
-        <li key={key} keyval={key} className="hover:bg-red-200 font-light text-[12px]" onClick={renderCard}>
+        <li key={key} keyval={key} className="transition-colors rounded p-[4px] font-light text-[12px] hover:bg-orange-300 hover:text-white" onClick={renderCard}>
           {components[key].text.title}
         </li>
       ))}
