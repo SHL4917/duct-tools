@@ -55,6 +55,17 @@ const componentDesc = {
     "pressudeLossSide2": "Pressure Loss (Pa) - Branch 2:",
   },
 }
+// loop over to add custom fields!
+let keys = Object.keys(components);
+let componentDescAll = {...componentDesc.flowRates, ...componentDesc.dimensions, ...componentDesc.others, ...componentDesc.results}
+keys.forEach((key) => {
+  let fields = Object.keys(components[key].reqInput);
+  fields.forEach((field) => {
+    if (!componentDescAll[field] && components[key].reqInput[field].newField) {
+      componentDesc.others[field] = components[key].reqInput[field].desc;
+    }
+  })
+})
 
 export {
   components,

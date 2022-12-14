@@ -78,7 +78,8 @@ class GenericComponent {
   validateFields(obj, fieldNames) {
     let arr = Object.keys(obj);
     for (let field of arr) {
-      if (!fieldNames.includes(field)) {
+      if (!fieldNames.includes(field) && !obj[field].newField) {
+        console.log(obj)
         throw new Error(
           `Field ${field} in object arguments is not a valid field!`
         );
