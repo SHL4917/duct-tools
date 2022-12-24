@@ -826,6 +826,197 @@ const SR5d5 = new GenericComponent(
     title: "SR5-5: Tee, diverging",
     desc: "Placeholder! As + Ab > Ac, As = Ac, width and height in and out through main is the same, height out through branch is the same"
   }
+) 
+
+const SR4d1 = new GenericComponent(
+  {
+    cmhMainOut: function(data, fields) {
+      return data.cmhMainIn;
+    },
+    velIn: function(data, fields) {
+      return (
+        data.cmhMainIn / 3600 / (data.widthIn * data.heightIn * 0.001 * 0.001)
+      );
+    },
+    velPresIn: function(data, fields) {
+      return 0.5 * 1.2 * fields.velIn(data, fields) ** 2;
+    },
+    velOut: function(data, fields) {
+      return (
+        fields.cmhMainOut(data, fields) / 3600 / (data.widthIn * data.heightOut * 0.001 * 0.001)
+      );
+    },
+    velPresOut: function(data, fields) {
+      return 0.5 * 1.2 * fields.velOut(data, fields) ** 2;
+    },
+    lossCoeffMain: function(data, fields) {
+      let coeff = [
+        [
+          0.0, 1.2e-1, 9.0e-2, 5.0e-2, 5.0e-2, 5.0e-2, 5.0e-2, 6.0e-2, 8.0e-2,
+          1.9e-1, 2.9e-1, 3.7e-1, 4.3e-1,
+        ],
+        [
+          0.0, 1.1e-1, 9.0e-2, 5.0e-2, 4.0e-2, 4.0e-2, 4.0e-2, 6.0e-2, 7.0e-2,
+          1.9e-1, 2.8e-1, 3.6e-1, 4.2e-1,
+        ],
+        [
+          0.0, 1.0e-1, 8.0e-2, 5.0e-2, 4.0e-2, 4.0e-2, 4.0e-2, 6.0e-2, 7.0e-2,
+          1.8e-1, 2.7e-1, 3.6e-1, 4.1e-1,
+        ],
+        [
+          0.0, 8.0e-2, 9.0e-2, 6.0e-2, 4.0e-2, 4.0e-2, 4.0e-2, 6.0e-2, 7.0e-2,
+          1.2e-1, 1.7e-1, 2.0e-1, 2.7e-1,
+        ],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
+        [
+          0.0, 6.4e-1, 9.6e-1, 5.4e-1, 5.2e-1, 6.2e-1, 9.4e-1, 1.4, 1.48, 1.52,
+          1.48, 1.44, 1.4,
+        ],
+        [
+          0.0, 4.16, 4.64, 2.72, 3.09, 4.0, 6.72, 9.6, 1.088e1, 1.12e1, 1.12e1,
+          1.088e1, 1.056e1,
+        ],
+        [
+          0.0, 1.224e1, 1.008e1, 7.38, 8.1, 1.08e1, 1.728e1, 2.34e1, 2.736e1,
+          2.988e1, 2.988e1, 2.934e1, 2.88e1,
+        ],
+        [
+          0.0, 4.05e1, 2.72e1, 2.33e1, 2.51e1, 3.4e1, 5.284e1, 6.9e1, 8.25e1,
+          9.35e1, 9.35e1, 9.24e1, 9.13e1,
+        ],
+        [
+          0.0, 1.1264e2, 6.835e1, 6.374e1, 6.784e1, 9.293e1, 1.4213e2, 1.8253e2,
+          2.2016e2, 2.5421e2, 2.5421e2, 2.519e2, 2.496e2,
+        ],
+      ];
+      let heightOutoverHeightIn = [0.1, 0.167, 0.25, 0.5, 1, 2, 4, 6, 10, 16];
+      let angle = [0, 3, 5, 10, 15, 20, 30, 45, 60, 90, 120, 150, 180];
+      return interpolate2D(
+        heightOutoverHeightIn,
+        angle,
+        coeff,
+        data.heightOut/data.heightIn,
+        data.transitionAngle
+      );
+    },
+    pressureLossMain: function(data, fields) {
+      return fields.velPresIn(data, fields) * fields.lossCoeffMain(data, fields);
+    }
+  },
+  rectOneToOne,
+  {
+    cmhMainIn: true,
+    cmhMainOut: false,
+    widthIn: true,
+    heightIn: true,
+    heightOut: true,
+    velIn: false,
+    velPresIn: false,
+    velOut: false,
+    velPresOut: false,
+    lossCoeffMain: false,
+    pressureLossMain: false,
+    transitionAngle: {
+      newField: true,
+      desc: "Transition Angle (deg): "
+    } 
+  },
+  {
+    title: "SR4-1: Transition, Rectangular, Two Sides Parallel",
+    desc: "Placeholder! Symmetrical duct, same width, variable height"
+  }
+)
+
+const SR5d3 = new GenericComponent(
+  {
+    cmhMainOut: function(data, fields) {
+      return data.cmhMainIn - data.cmhSideOut;
+    },
+    velIn: function(data, fields) {
+      return (
+        data.cmhMainIn / 3600 / (data.widthIn * data.heightIn * 0.001 * 0.001)
+      );
+    },
+    velPresIn: function(data, fields) {
+      return 0.5 * 1.2 * fields.velIn(data, fields) ** 2;
+    },
+    velOut: function(data, fields) {
+      return (
+        fields.cmhMainOut(data, fields) / 3600 / (data.widthIn * data.heightIn * 0.001 * 0.001)
+      );
+    },
+    velPresOut: function(data, fields) {
+      return 0.5 * 1.2 * fields.velOut(data, fields) ** 2;
+    },
+    velOutSide: function(data, fields) {
+      return (
+        fields.cmhMainOut(data, fields) / 3600 / (data.widthOutSide * data.heightIn * 0.001 * 0.001)
+      );
+    },
+    velPresOutSide: function(data, fields) {
+      return 0.5 * 1.2 * fields.velOutSide(data, fields) ** 2;
+    },
+    lossCoeffMain: function(data, fields) {
+      let coeff = [32.4, 6.4, 2.18, 0.9, 0.4, 0.18, 0.07, 0.03, 0];
+      let cmhMainOutOverCmhMainIn = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];
+      return interpolate1D(
+        cmhMainOutOverCmhMainIn,
+        coeff,
+        fields.cmhMainOut(data, fields)/data.cmhMainIn
+      )
+    },
+    lossCoeffSide: function(data, fields) {
+      let coeff = [
+        [0.6, 0.52, 0.57, 0.58, 0.64, 0.67, 0.7, 0.71, 0.73],
+        [2.24, 0.56, 0.44, 0.45, 0.51, 0.54, 0.58, 0.6, 0.62],
+        [5.93, 1.08, 0.52, 0.41, 0.43, 0.46, 0.49, 0.52, 0.54],
+        [10.61, 1.89, 0.72, 0.43, 0.34, 0.31, 0.31, 0.33, 0.34],
+        [17.7, 3.23, 1.14, 0.59, 0.4, 0.31, 0.3, 0.3, 0.31],
+        [26.66, 5.01, 1.75, 0.84, 0.5, 0.36, 0.31, 0.3, 0.3],
+        [37.49, 7.22, 2.53, 1.17, 0.66, 0.43, 0.35, 0.32, 0.3],
+        [50.2, 9.87, 3.49, 1.61, 0.88, 0.54, 0.41, 0.35, 0.32],
+        [64.77, 12.95, 4.63, 2.13, 1.14, 0.69, 0.5, 0.4, 0.35],
+      ];
+      let widthOutOverWidthIn = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];
+      let cmhSideOutOverCmhMainIn = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];
+      return interpolate2D(
+        widthOutOverWidthIn,
+        cmhSideOutOverCmhMainIn,
+        coeff,
+        data.widthOutSide/data.widthIn,
+        data.cmhSideOut/data.cmhMainIn
+      )
+    },
+    pressureLossMain: function(data, fields) {
+      return fields.velPresIn(data, fields) * fields.lossCoeffMain(data, fields);
+    },
+    pressureLossSide: function(data, fields) {
+      return fields.velPresIn(data, fields) * fields.lossCoeffSide(data, fields);
+    },
+  },
+  rectOneToMany,
+  {
+    cmhMainIn: true,
+    cmhMainOut: false,
+    cmhSideOut: true,
+    widthIn: true,
+    heightIn: true,
+    widthOutSide: true,
+    velIn: false,
+    velOut: false,
+    velOutSide: false,
+    velPresIn: false,
+    velPresOut: false,
+    velPresOutSide: false,
+    lossCoeffMain: false,
+    lossCoeffSide: false,
+    pressureLossMain: false,
+    pressureLossSide: false,
+  },
+  {
+    title: "SR5-3: Diverging Wye, 45 Degrees",
+    desc: "Placeholder! Same height throughout, same width through main"
+  }
 )
 
 export {
@@ -837,5 +1028,7 @@ export {
   ER5d2,
   ER3d1,
   SR1d1,
-  SR5d5
+  SR5d5,
+  SR4d1,
+  SR5d3,
 };

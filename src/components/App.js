@@ -23,7 +23,7 @@ function App() {
       setCardName(card);
     }
     
-  }, [selection, nodeState.nodeList]);
+  }, [selection, nodeState.nodeList]); 
 
   // Probably a useEffect here watching the 'selectedNode' variable from the selectionSlice store
 
