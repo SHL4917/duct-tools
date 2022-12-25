@@ -418,7 +418,17 @@ const SR5d11 = new GenericComponent(
       );
     },
   },
-  rectOneToMany,
+  {
+    roundIn: false,
+    roundOut: true,
+    rectIn: true,
+    rectOut: true,
+    ovalIn: false,
+    ovalOut: false,
+    oneInput: true,
+    oneOutput: false,
+    transition: true,
+  },
   {
     cmhMainIn: true,
     cmhMainOut: true,
@@ -581,7 +591,7 @@ const ER5d2 = new GenericComponent(
     ovalOut: false,
     oneInput: false,
     oneOutput: true,
-    transition: false,
+    transition: true,
   },
   {
     cmhMainIn: true,
@@ -1019,6 +1029,443 @@ const SR5d3 = new GenericComponent(
   }
 )
 
+const SR5d13 = new GenericComponent(
+  {
+    cmhMainOut: function(data, fields) {
+      return data.cmhMainIn - data.cmhSideOut;
+    },
+    velIn: function(data, fields) {
+      return (
+        data.cmhMainIn / 3600 / (data.widthIn * data.heightIn * 0.001 * 0.001)
+      );
+    },
+    velPresIn: function(data, fields) {
+      return 0.5 * 1.2 * fields.velIn(data, fields) ** 2;
+    },
+    velOut: function(data, fields) {
+      return (
+        fields.cmhMainOut(data, fields) / 3600 / (data.widthOut * data.heightOut * 0.001 * 0.001)
+      );
+    },
+    velOutSide: function(data, fields) {
+      return (
+        data.cmhSideOut / 3600 / (data.widthOutSide * data.heightOutSide * 0.001 * 0.001)
+      );
+    },
+    lossCoeffMain: function(data, fields) {
+      let coeff = [
+        [4.0e-2, 1.0e-2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [9.8e-1, 4.0e-2, 1.0e-2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [3.48, 3.1e-1, 4.0e-2, 1.0e-2, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [7.55, 9.8e-1, 1.8e-1, 4.0e-2, 2.0e-2, 0.0, 0.0, 0.0, 0.0],
+        [1.318e1, 2.03, 4.9e-1, 1.3e-1, 4.0e-2, 0.0, 1.0e-2, 0.0, 0.0],
+        [2.038e1, 3.48, 9.8e-1, 3.1e-1, 1.0e-1, 4.0e-2, 2.0e-2, 1.0e-2, 0.0],
+        [2.915e1, 5.32, 1.64, 6.0e-1, 2.3e-1, 9.0e-2, 4.0e-2, 2.0e-2, 1.0e-2],
+        [3.948e1, 7.55, 2.47, 9.8e-1, 4.2e-1, 1.8e-1, 8.0e-2, 4.0e-2, 2.0e-2],
+        [5.137e1, 1.017e1, 3.48, 1.46, 6.7e-1, 3.1e-1, 1.5e-1, 7.0e-2, 4.0e-2],
+      ];
+      return interpolate2D(
+        [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+        [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+        coeff,
+        (data.widthOut * data.heightOut)/(data.widthIn * data.heightIn),
+        fields.cmhMainOut(data, fields)/data.cmhMainIn
+      )
+    },
+    lossCoeffSide: function(data, fields) {
+      let coeff = [[ 0.32,  0.33,  0.32,  0.34,  0.32,  0.37,  0.38,  0.39,  0.4 ],
+      [ 0.31,  0.32,  0.41,  0.34,  0.32,  0.32,  0.33,  0.34,  0.35],
+      [ 1.86,  1.65,  0.73,  0.47,  0.37,  0.34,  0.32,  0.32,  0.32],
+      [ 3.56,  3.1 ,  1.28,  0.73,  0.51,  0.41,  0.36,  0.34,  0.32],
+      [ 5.74,  4.93,  2.07,  1.12,  0.73,  0.54,  0.44,  0.38,  0.35],
+      [ 8.48,  7.24,  3.1 ,  1.65,  1.03,  0.73,  0.56,  0.47,  0.41],
+      [11.75, 10.  ,  4.32,  3.31,  1.42,  0.98,  0.73,  0.58,  0.49],
+      [15.57, 13.22,  5.74,  3.1 ,  1.9 ,  1.28,  0.94,  0.73,  0.6 ],
+      [19.92, 16.9 ,  7.38,  4.02,  2.46,  1.65,  1.19,  0.91,  0.73]];
+      return interpolate2D(
+        [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+        [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+        coeff,
+        (data.widthOutSide * data.heightOutSide)/(data.widthIn * data.heightIn),
+        data.cmhSideOut/data.cmhMainIn
+      )
+    },
+    pressureLossMain: function(data, fields) {
+      return fields.velPresIn(data, fields) * fields.lossCoeffMain(data, fields);
+    },
+    pressureLossSide: function(data, fields) {
+      return fields.velPresIn(data, fields) * fields.lossCoeffSide(data, fields);
+    }
+  },
+  rectOneToMany,
+  {
+    cmhMainIn: true,
+    cmhMainOut: false,
+    cmhSideOut: true,
+    widthIn: true,
+    heightIn: true,
+    widthOut: true,
+    heightOut: true,
+    widthOutSide: true,
+    heightOutSide: true,
+    velIn: false,
+    velOut: false,
+    velOutSide: false,
+    velPresIn: false,
+    lossCoeffMain: false,
+    lossCoeffSide: false,
+    pressureLossMain: false,
+    pressureLossSide: false,
+  },
+  {
+    title: "SR5-13: Diverging Tee, 45 Degree Entry",
+    desc: "Placeholder! Assumes tee transition of 0.25 tee exit width"
+  }
+);
+
+const CR3d6 = new GenericComponent(
+  {
+    cmhMainOut: function(data, fields) {
+      return data.cmhMainIn;
+    },
+    velIn: function(data, fields) {
+      return (
+        data.cmhMainIn / 3600 / (data.widthIn * data.heightIn * 0.001 * 0.001)
+      );
+    },
+    velPresIn: function(data, fields) {
+      return 0.5 * 1.2 * fields.velIn(data, fields) ** 2;
+    },
+    lossCoeffMain: function(data, fields) {
+      let angle = data.turnAngle % 360
+      let coeff = [[0.08, 0.08, 0.08, 0.07, 0.07, 0.07, 0.06, 0.06, 0.05, 0.05, 0.05],
+      [0.18, 0.17, 0.17, 0.16, 0.15, 0.15, 0.13, 0.13, 0.12, 0.12, 0.11],
+      [0.38, 0.37, 0.36, 0.34, 0.33, 0.31, 0.28, 0.27, 0.26, 0.25, 0.24],
+      [0.6 , 0.59, 0.57, 0.55, 0.52, 0.49, 0.46, 0.43, 0.41, 0.39, 0.38],
+      [0.89, 0.87, 0.84, 0.81, 0.77, 0.73, 0.67, 0.63, 0.61, 0.58, 0.57],
+      [1.3 , 1.27, 1.23, 1.18, 1.13, 1.07, 0.98, 0.92, 0.89, 0.85, 0.83]];
+      return interpolate2D(
+        [20, 30, 45, 60, 75, 90],
+        [0.25, 0.50, 0.75, 1, 1.5, 2, 3, 4, 5, 6, 8],
+        coeff,
+        angle,
+        data.heightIn/data.widthIn,
+      )
+    },
+    pressureLossMain: function(data, fields) {
+      return fields.velPresIn(data, fields) * fields.lossCoeffMain(data, fields);
+    }
+  },
+  rectOneToOne,
+  {
+    cmhMainIn: true,
+    cmhMainOut: false,
+    widthIn: true,
+    heightIn: true,
+    turnAngle: true,
+    velIn: false,
+    velPresIn: false,
+    lossCoeffMain: false,
+    pressureLossMain: false,
+  },
+  {
+    title: "CR3-6: Elbow, Mitered",
+    desc: "Constant width and height, variable turn angle from 20-90deg, w.r.t. incoming flow"
+  }
+)
+
+const CR3d9 = new GenericComponent(
+  {
+    cmhMainOut: function(data, fields) {
+      return data.cmhMainIn;
+    },
+    velIn: function(data, fields) {
+      return (
+        data.cmhMainIn / 3600 / (data.widthIn * data.heightIn * 0.001 * 0.001)
+      );
+    },
+    velPresIn: function(data, fields) {
+      return 0.5 * 1.2 * fields.velIn(data, fields) ** 2;
+    },
+    lossCoeffMain: function(data, fields) {
+      return 0.11;
+    },
+    pressureLossMain: function(data, fields) {
+      return fields.velPresIn(data, fields) * fields.lossCoeffMain(data, fields);
+    }
+  },
+  rectOneToOne,
+  {
+    cmhMainIn: true,
+    cmhMainOut: false,
+    widthIn: true,
+    heightIn: true,
+    velIn: false,
+    velPresIn: false,
+    lossCoeffMain: false,
+    pressureLossMain: false,
+  },
+  {
+    title: "CR3-9: Elbow, Mitered, 90 Degrees, 40mm-Spaced Vanes (Single-Thickness)",
+    desc: "Const loss coefficient of 0.11"
+  }
+)
+
+const CR3d12 = new GenericComponent(
+  {
+    cmhMainOut: function(data, fields) {
+      return data.cmhMainIn;
+    },
+    velIn: function(data, fields) {
+      return (
+        data.cmhMainIn / 3600 / (data.widthIn * data.heightIn * 0.001 * 0.001)
+      );
+    },
+    velPresIn: function(data, fields) {
+      return 0.5 * 1.2 * fields.velIn(data, fields) ** 2;
+    },
+    lossCoeffMain: function(data, fields) {
+      return 0.33;
+    },
+    pressureLossMain: function(data, fields) {
+      return fields.velPresIn(data, fields) * fields.lossCoeffMain(data, fields);
+    }
+  },
+  rectOneToOne,
+  {
+    cmhMainIn: true,
+    cmhMainOut: false,
+    widthIn: true,
+    heightIn: true,
+    velIn: false,
+    velPresIn: false,
+    lossCoeffMain: false,
+    pressureLossMain: false,
+  },
+  {
+    title: "CR3-12: Elbow, Mitered, 90 Degrees, 80mm-Spaced Vanes (Single-Thickness)",
+    desc: "Const loss coefficient of 0.33"
+  }
+)
+
+const CR3d15 = new GenericComponent(
+  {
+    cmhMainOut: function(data, fields) {
+      return data.cmhMainIn;
+    },
+    velIn: function(data, fields) {
+      return (
+        data.cmhMainIn / 3600 / (data.widthIn * data.heightIn * 0.001 * 0.001)
+      );
+    },
+    velPresIn: function(data, fields) {
+      return 0.5 * 1.2 * fields.velIn(data, fields) ** 2;
+    },
+    lossCoeffMain: function(data, fields) {
+      return 0.25;
+    },
+    pressureLossMain: function(data, fields) {
+      return fields.velPresIn(data, fields) * fields.lossCoeffMain(data, fields);
+    }
+  },
+  rectOneToOne,
+  {
+    cmhMainIn: true,
+    cmhMainOut: false,
+    widthIn: true,
+    heightIn: true,
+    velIn: false,
+    velPresIn: false,
+    lossCoeffMain: false,
+    pressureLossMain: false,
+  },
+  {
+    title: "CR3-15: Elbow, Mitered, 90 Degrees, 60mm-Spaced Vanes (Double-Thickness)",
+    desc: "Const loss coefficient of 0.25"
+  }
+)
+
+const CR3d16 = new GenericComponent(
+  {
+    cmhMainOut: function(data, fields) {
+      return data.cmhMainIn;
+    },
+    velIn: function(data, fields) {
+      return (
+        data.cmhMainIn / 3600 / (data.widthIn * data.heightIn * 0.001 * 0.001)
+      );
+    },
+    velPresIn: function(data, fields) {
+      return 0.5 * 1.2 * fields.velIn(data, fields) ** 2;
+    },
+    lossCoeffMain: function(data, fields) {
+      return 0.41;
+    },
+    pressureLossMain: function(data, fields) {
+      return fields.velPresIn(data, fields) * fields.lossCoeffMain(data, fields);
+    }
+  },
+  rectOneToOne,
+  {
+    cmhMainIn: true,
+    cmhMainOut: false,
+    widthIn: true,
+    heightIn: true,
+    velIn: false,
+    velPresIn: false,
+    lossCoeffMain: false,
+    pressureLossMain: false,
+  },
+  {
+    title: "CR3-16: Elbow, Mitered, 90 Degrees, 80mm-Spaced Vanes (Double-Thickness)",
+    desc: "Const loss coefficient of 0.41"
+  }
+)
+
+const CR3d17 = new GenericComponent(
+  {
+    cmhMainOut: function(data, fields) {
+      return data.cmhMainIn;
+    },
+    velIn: function(data, fields) {
+      return (
+        data.cmhMainIn / 3600 / (data.widthIn * data.heightIn * 0.001 * 0.001)
+      );
+    },
+    velPresIn: function(data, fields) {
+      return 0.5 * 1.2 * fields.velIn(data, fields) ** 2;
+    },
+    lossCoeffMain: function(data, fields) {
+      let hydraulicD = 0.001 * 2 * (data.widthIn * data.heightIn) / (data.widthIn + data.heightIn);
+      let reynolds = (1.2 * fields.velIn(data, fields) * hydraulicD) / 18.32;
+      let correctionFactor = interpolate1D(
+        [10, 20, 30, 40, 60, 80, 100, 140, 500],
+        [1.4, 1.26, 1.19, 1.14, 1.09, 1.06, 1.04, 1, 1],
+        reynolds/1000
+      );
+      let coeff = [
+        [
+          0, 0.68, 0.99, 1.77, 2.89, 3.97, 4.41, 4.6, 4.64, 4.6, 3.39, 3.03,
+          2.7,
+        ],
+        [
+          0, 0.66, 0.96, 1.72, 2.81, 3.86, 4.29, 4.47, 4.52, 4.47, 3.3, 2.94,
+          2.62,
+        ],
+        [
+          0, 0.64, 0.94, 1.67, 2.74, 3.75, 4.17, 4.35, 4.39, 4.35, 3.2, 2.86,
+          2.55,
+        ],
+        [
+          0, 0.62, 0.9, 1.61, 2.63, 3.61, 4.01, 4.18, 4.22, 4.18, 3.08, 2.75,
+          2.45,
+        ],
+        [
+          0, 0.59, 0.86, 1.53, 2.5, 3.43, 3.81, 3.97, 4.01, 3.97, 2.93, 2.61,
+          2.33,
+        ],
+        [
+          0, 0.56, 0.81, 1.45, 2.37, 3.25, 3.61, 3.76, 3.8, 3.76, 2.77, 2.48,
+          2.21,
+        ],
+        [0, 0.51, 0.75, 1.34, 2.18, 3, 3.33, 3.47, 3.5, 3.47, 2.56, 2.28, 2.03],
+        [
+          0, 0.48, 0.7, 1.26, 2.05, 2.82, 3.13, 3.26, 3.29, 3.26, 2.4, 2.15,
+          1.91,
+        ],
+        [
+          0, 0.45, 0.65, 1.16, 1.89, 2.6, 2.89, 3.01, 3.04, 3.01, 2.22, 1.98,
+          1.76,
+        ],
+        [
+          0, 0.43, 0.63, 1.13, 1.84, 2.53, 2.81, 2.93, 2.95, 2.93, 2.16, 1.93,
+          1.72,
+        ],
+      ];
+      return correctionFactor * interpolate2D(
+        [0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4, 6, 8],
+        [0, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2, 4, 8, 10],
+        coeff,
+        data.heightIn/data.widthIn,
+        data.length/data.widthIn
+      )
+    },
+    pressureLossMain: function(data, fields) {
+      return fields.velPresIn(data, fields) * fields.lossCoeffMain(data, fields);
+    },
+  },
+  rectOneToOne,
+  {
+    cmhMainIn: true,
+    cmhMainOut: false,
+    widthIn: true,
+    heightIn: true,
+    length: true,
+    velIn: false,
+    velPresIn: false,
+    lossCoeffMain: false,
+    pressureLossMain: false,
+  },
+  {
+    title: "CR3-17: Elbow, Z-Shaped",
+    desc: "Constant cross sectional shape, length refers to drop-length"
+  }
+)
+
+const SR3d1 = new GenericComponent(
+  {
+    cmhMainOut: function(data, fields) {
+      return data.cmhMainIn;
+    },
+    velIn: function(data, fields) {
+      return (
+        data.cmhMainIn / 3600 / (data.widthIn * data.heightIn * 0.001 * 0.001)
+      );
+    },
+    velPresIn: function(data, fields) {
+      return 0.5 * 1.2 * fields.velIn(data, fields) ** 2;
+    },
+    velOut: function(data, fields) {
+      return (
+        data.cmhMainIn / 3600 / (data.widthOut * data.heightIn * 0.001 * 0.001)
+      );
+    },
+    lossCoeffMain: function(data, fields) {
+      let coeff = [[0.63, 0.92, 1.24, 1.64, 2.14, 2.71, 4.24],
+      [0.61, 0.87, 1.15, 1.47, 1.86, 2.3 , 3.36],
+      [0.53, 0.7 , 0.9 , 1.17, 1.49, 1.84, 2.64],
+      [0.54, 0.67, 0.79, 0.99, 1.23, 1.54, 2.2 ]];
+      return interpolate2D(
+        [0.25, 1, 4, 100],
+        [0.6, 0.8, 1, 1.2, 1.4, 1.6, 2],
+        coeff,
+        data.heightIn/data.widthIn,
+        data.widthOut/data.widthIn
+      )
+    },
+    pressureLossMain: function(data, fields) {
+      return fields.velPresIn(data, fields) * fields.lossCoeffMain(data, fields);
+    },
+  },
+  rectOneToOne,
+  {
+    cmhMainIn: true,
+    cmhMainOut: false,
+    widthIn: true,
+    heightIn: true,
+    widthOut: true,
+    velIn: false,
+    velPresIn: false,
+    velOut: false,
+    lossCoeffMain: false,
+    pressureLossMain: false,
+  },
+  {
+    title: "SR3-1: Elbow. 90deg, Variable Inlet and Outlet Areas",
+    desc: "Constant height, variable width"
+  }
+)
+
 export {
   straightRectDuct,
   CR3d1,
@@ -1031,4 +1478,12 @@ export {
   SR5d5,
   SR4d1,
   SR5d3,
+  SR5d13,
+  CR3d6,
+  CR3d9,
+  CR3d12,
+  CR3d15,
+  CR3d16,
+  CR3d17,
+  SR3d1,
 };
