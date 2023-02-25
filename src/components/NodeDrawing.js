@@ -135,6 +135,23 @@ function NodeDrawing() {
     }))
   })
 
+  // const nodeMouseEnter = (evt, node) => {
+  //   console.log(node);
+  //   if(node.id.includes("temp")) {
+  //     console.log("Temp node!")
+  //   } else {
+  //     console.log(node.id)
+  //   }
+  // }
+
+  // const nodeMouseMove = (evt, node) => {
+  //   return
+  // }
+
+  // const nodeMouseLeave = (evt, node) => {
+  //   return
+  // }
+
   return (
     <ReactFlow
       nodes={nodes}
@@ -144,6 +161,7 @@ function NodeDrawing() {
       onNodeClick={onNodeClick}
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
+
       fitView
     >
       <Controls />

@@ -5,6 +5,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {create, updateData, insertAfter, insertBefore, switchAfter, switchBefore, deleteNode} from '../redux/nodeSlice';
 import {update, nodeNotClicked, nodeClicked} from '../redux/selectionSlice';
 import Triangle from "./Triangle"
+import ComponentDiagram from "./ComponentDiagram"
 
 const branchMap = {
   cmhMainOut: {
@@ -34,6 +35,7 @@ const ComponentForm = (props) => {
   const [leftToggle, setLeftToggle] = useState(false);
   const [rightToggle, setRightToggle] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [showDiagram, setShowDiagram] = useState(false);
   let selectedComponent = components[props.cardName];
   let reqInput = selectedComponent.reqInput;
 
@@ -304,8 +306,12 @@ const ComponentForm = (props) => {
   let typeCSS = "flex flex-col flex-wrap mr-6 basis-1/4"
   return(
     <div className="flex flex-col h-[100%]">
-      <div className="border-b-[1px] border-gray-200 flex flex-row px-4 py-2 items-center grow-0">
-        <div className="font-medium text-[22px] mr-4">{selectedComponent.text.title}</div>
+      <div className="border-b-[1px] border-gray-200 flex flex-row px-4 items-center grow-0 w-[100%]">
+        <div className="font-medium text-gray-300 text-center border-[1px] border-gray-300 text-[12px] p-1 rounded select-none
+          hover:text-gray-400 hover:border-black" onClick={() => setShowDiagram(true)}>PIC</div>
+        <ComponentDiagram toggle={setShowDiagram} display={showDiagram} compName={props.cardName}/>
+        <div className="border-r-[1px] border-gray-200 h-[100%] mx-2"></div>
+        <div className="font-medium text-[18px] mr-4 my-2">{selectedComponent.text.title}</div>
         <div 
           className="font-medium text-gray-300 text-center leading-4 rounded-full border-[1px] border-gray-300 text-[12px] w-4 h-4 select-none
           hover:text-gray-400 hover:border-black"

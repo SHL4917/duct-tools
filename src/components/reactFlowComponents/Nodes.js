@@ -1,7 +1,7 @@
 import React from "react";
 import { Handle } from "react-flow-renderer";
 
-const baseStyle = 'px-3 py-1 font-medium rounded-sm text-xs border'
+const baseStyle = 'px-3 py-1 font-medium rounded-sm text-xs border shadow-[3px_4px_0_1px_rgba(0,0,0,0.5)]'
 
 const RectangleNode = ({ data }) => {
   let handleStyle = { background: '#999999', height: '5px', width: '5px', padding: '3px', borderColor: '#FCFCFC', borderWidth: '2px'  };

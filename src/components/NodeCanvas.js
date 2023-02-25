@@ -9,7 +9,9 @@ import {update} from '../redux/selectionSlice';
 const scaleBy = 1.05;
 
 const initialCircles = [];
-
+/*
+COMPONENT NOT IN USE, IN PLACE FOR POSSIBLE FUTURE REFERENCE
+*/
 const NodeCanvas = () => {
   const stageRef = useRef(null);
   const [circles, setCircles] = useState(initialCircles);
@@ -104,7 +106,6 @@ const NodeCanvas = () => {
             y={circle.y}
             radius={15}
             fill="#89b717"
-            fill="black"
             perfectDrawEnabled={false}
             onMouseOver={handleMouseOver}
             onMouseOut={handleMouseOut}
