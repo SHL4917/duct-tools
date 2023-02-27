@@ -1,6 +1,5 @@
 import React from "react";
 import { useState } from "react";
-import * as trialComponents from "../pipeComponents/trialComponents";
 import {components} from "../pipeComponents/components";
 
 const ComponentList = (props) => {

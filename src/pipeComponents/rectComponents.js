@@ -94,7 +94,7 @@ let straightRectDuct = new GenericComponent(
   }
 );
 
-let CR3d1 = new GenericComponent(
+let Cr3D1 = new GenericComponent(
   {
     cmhMainOut: function (data, fields) {
       return data.cmhMainIn;
@@ -154,7 +154,7 @@ let CR3d1 = new GenericComponent(
   }
 );
 
-let SR5d1 = new GenericComponent(
+let Sr5D1 = new GenericComponent(
   {
     cmhSideOut: function (data, fields) {
       return data.cmhMainIn - data.cmhMainOut;
@@ -324,7 +324,7 @@ let SR5d1 = new GenericComponent(
   }
 );
 
-const SR5d11 = new GenericComponent(
+const Sr5D11 = new GenericComponent(
   {
     cmhSideOut: function (data, fields) {
       return data.cmhMainIn - data.cmhMainOut;
@@ -455,7 +455,7 @@ const SR5d11 = new GenericComponent(
   }
 );
 
-const CR9d1 = new GenericComponent(
+const Cr9D1 = new GenericComponent(
   {
     cmhMainOut: function (data, fields) {
       return data.cmhMainIn;
@@ -516,7 +516,7 @@ const CR9d1 = new GenericComponent(
   }
 );
 
-const ER5d2 = new GenericComponent(
+const Er5D2 = new GenericComponent(
   {
     cmhMainOut: function (data, fields) {
       return data.cmhMainIn + data.cmhSideIn;
@@ -617,7 +617,7 @@ const ER5d2 = new GenericComponent(
   }
 );
 
-const ER3d1 = new GenericComponent(
+const Er3D1 = new GenericComponent(
   {
     cmhMainOut: function(data, fields) {
       return data.cmhMainIn;
@@ -677,7 +677,7 @@ const ER3d1 = new GenericComponent(
   }
 )
 
-const SR1d1 = new GenericComponent(
+const Sr1D1 = new GenericComponent(
   {
     cmhMainOut: function(data, fields) {
       return data.cmhMainIn;
@@ -742,7 +742,7 @@ const SR1d1 = new GenericComponent(
   }
 )
 
-const SR5d5 = new GenericComponent(
+const Sr5D5 = new GenericComponent(
   {
     cmhMainOut: function(data, fields) {
       return data.cmhMainIn - data.cmhSideOut;
@@ -838,7 +838,7 @@ const SR5d5 = new GenericComponent(
   }
 ) 
 
-const SR4d1 = new GenericComponent(
+const Sr4D1 = new GenericComponent(
   {
     cmhMainOut: function(data, fields) {
       return data.cmhMainIn;
@@ -937,7 +937,7 @@ const SR4d1 = new GenericComponent(
   }
 )
 
-const SR5d3 = new GenericComponent(
+const Sr5D3 = new GenericComponent(
   {
     cmhMainOut: function(data, fields) {
       return data.cmhMainIn - data.cmhSideOut;
@@ -1029,7 +1029,7 @@ const SR5d3 = new GenericComponent(
   }
 )
 
-const SR5d13 = new GenericComponent(
+const Sr5D13 = new GenericComponent(
   {
     cmhMainOut: function(data, fields) {
       return data.cmhMainIn - data.cmhSideOut;
@@ -1123,7 +1123,7 @@ const SR5d13 = new GenericComponent(
   }
 );
 
-const CR3d6 = new GenericComponent(
+const Cr3D6 = new GenericComponent(
   {
     cmhMainOut: function(data, fields) {
       return data.cmhMainIn;
@@ -1174,7 +1174,7 @@ const CR3d6 = new GenericComponent(
   }
 )
 
-const CR3d9 = new GenericComponent(
+const Cr3D9 = new GenericComponent(
   {
     cmhMainOut: function(data, fields) {
       return data.cmhMainIn;
@@ -1211,7 +1211,7 @@ const CR3d9 = new GenericComponent(
   }
 )
 
-const CR3d12 = new GenericComponent(
+const Cr3D12 = new GenericComponent(
   {
     cmhMainOut: function(data, fields) {
       return data.cmhMainIn;
@@ -1248,7 +1248,7 @@ const CR3d12 = new GenericComponent(
   }
 )
 
-const CR3d15 = new GenericComponent(
+const Cr3D15 = new GenericComponent(
   {
     cmhMainOut: function(data, fields) {
       return data.cmhMainIn;
@@ -1285,7 +1285,7 @@ const CR3d15 = new GenericComponent(
   }
 )
 
-const CR3d16 = new GenericComponent(
+const Cr3D16 = new GenericComponent(
   {
     cmhMainOut: function(data, fields) {
       return data.cmhMainIn;
@@ -1322,7 +1322,7 @@ const CR3d16 = new GenericComponent(
   }
 )
 
-const CR3d17 = new GenericComponent(
+const Cr3D17 = new GenericComponent(
   {
     cmhMainOut: function(data, fields) {
       return data.cmhMainIn;
@@ -1412,7 +1412,7 @@ const CR3d17 = new GenericComponent(
   }
 )
 
-const SR3d1 = new GenericComponent(
+const Sr3D1 = new GenericComponent(
   {
     cmhMainOut: function(data, fields) {
       return data.cmhMainIn;
@@ -1468,22 +1468,22 @@ const SR3d1 = new GenericComponent(
 
 export {
   straightRectDuct,
-  CR3d1,
-  SR5d1,
-  SR5d11,
-  CR9d1,
-  ER5d2,
-  ER3d1,
-  SR1d1,
-  SR5d5,
-  SR4d1,
-  SR5d3,
-  SR5d13,
-  CR3d6,
-  CR3d9,
-  CR3d12,
-  CR3d15,
-  CR3d16,
-  CR3d17,
-  SR3d1,
+  Cr3D1,
+  Sr5D1,
+  Sr5D11,
+  Cr9D1,
+  Er5D2,
+  Er3D1,
+  Sr1D1,
+  Sr5D5,
+  Sr4D1,
+  Sr5D3,
+  Sr5D13,
+  Cr3D6,
+  Cr3D9,
+  Cr3D12,
+  Cr3D15,
+  Cr3D16,
+  Cr3D17,
+  Sr3D1,
 };

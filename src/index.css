@@ -13,6 +13,10 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
+svg path, circle, ellipse, line, rect, polyline, polygon{
+  stroke-width: 1.25;
+}
+
 /* inter-100 - latin */
 @font-face {
   font-family: 'Inter';

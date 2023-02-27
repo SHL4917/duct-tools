@@ -1,29 +1,30 @@
-import {useState, useEffect} from 'react';
-import Viewport from './Viewport';
-import ComponentList from './ComponentList';
-import ComponentCard from './ComponentCard';
-import {useSelector, useDispatch} from 'react-redux';
-import {nodeNotClicked} from '../redux/selectionSlice';
+import { useState, useEffect } from "react";
+import Viewport from "./Viewport";
+import ComponentList from "./ComponentList";
+import ComponentCard from "./ComponentCard";
+import { useSelector, useDispatch } from "react-redux";
+import { nodeNotClicked } from "../redux/selectionSlice";
+import DiagramLibrary from "./DiagramLibrary"
 // Use command 'npx gulp' after moving the script tag in the bundled html file to the end of the body!
 
 function App() {
   const nodeState = useSelector((state) => state.node);
   const selection = useSelector((state) => state.selection);
   const [cardName, setCardName] = useState(null);
+  const [showDiagram, setShowDiagram] = useState(false);
   const dispatch = useDispatch();
 
   let selectCard = (card) => {
     setCardName(card);
     dispatch(nodeNotClicked());
-  }
+  };
 
   useEffect(() => {
     if (selection.nodeNumber && selection.nodeSelected && selection.update) {
-      let card = nodeState.nodeList[selection.nodeNumber].compData
+      let card = nodeState.nodeList[selection.nodeNumber].compData;
       setCardName(card);
     }
-    
-  }, [selection, nodeState.nodeList]); 
+  }, [selection, nodeState.nodeList]);
 
   // Probably a useEffect here watching the 'selectedNode' variable from the selectionSlice store
 
@@ -32,8 +33,16 @@ function App() {
       <div className="flex items-stretch h-[100vh] m-8 rounded-[10px] overflow-hidden shadow-card border-2 border-gray-300 bg-gray-100">
         <div className="w-[15em] max-w-[17em] grow shrink-0 flex flex-col border-r-[1px] border-gray-200">
           <div className="h-24 border-b-[1px] border-gray-200 flex flex-col py-2 px-4">
-            <div className="font-light text-[28px] text-gray-400 select-none">DUCT TOOLS</div>
-            <div className="font-medium">To enter name + icon</div>
+            <div className="font-light text-[28px] text-gray-400 select-none">
+              DUCT TOOLS
+            </div>
+            <div
+              className="font-medium select-none hover:text-gray-400"
+              onClick={() => setShowDiagram(true)}
+            >
+              Click here for all diagrams
+            </div>
+            <DiagramLibrary toggle={setShowDiagram} display={showDiagram}/>
           </div>
           <div className="grow py-4 px-2 overflow-auto z-20">
             <ComponentList selectCard={selectCard} />
