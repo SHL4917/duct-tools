@@ -49,10 +49,10 @@ function App() {
           </div>
         </div>
         <div className="w-[60rem] grow shrink-0 flex flex-col">
-          <div className="basis-1/2 my-4 mx-6 rounded-[10px] shadow-card border-2 border-gray-300 bg-gray-100 overflow-hidden">
+          <div className="basis-1/2 my-4 mx-6 rounded-[10px] shadow-card border-2 border-gray-300 bg-gray-100 overflow-hidden z-30">
             <ComponentCard cardName={cardName} />
           </div>
-          <div className="basis-1/2 mb-4 mx-6 overflow-hidden rounded-[10px] shadow-card border-2 border-gray-300 flex flex-col bg-gray-100">
+          <div className="basis-1/2 mb-4 mx-6 overflow-hidden rounded-[10px] shadow-card border-2 border-gray-300 flex flex-col bg-gray-100 z-25">
             <Viewport />
           </div>
         </div>
