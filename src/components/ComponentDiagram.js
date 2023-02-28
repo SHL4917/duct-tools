@@ -1,15 +1,16 @@
 import React from "react";
-import { useState } from "react";
+import { useEffect } from "react";
 import { useRef } from "react";
 import * as Diagrams from "../ductDiagramsComponents/index"
 
 const ComponentDiagram = (props) => {
   
-  if (!Diagrams[props.compName]) {
-    props.toggle(false)
-    console.log("No Diagram!")
-    console.log(props.compName)
-  }
+  useEffect(() => {
+    if (!Diagrams[props.compName]) {
+      props.toggle(false)
+    }
+  }, [])
+
   const closeWindow = () => {
     props.toggle(false);
   };
@@ -24,7 +25,10 @@ const ComponentDiagram = (props) => {
       <div
         className="bg-gray-100 border-gray-300 border-[1px] rounded-[10px] p-4 w-[800px] h-fit shadow-card absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-60"
       >
-        <ToRender />
+        {Diagrams[props.compName]?
+          <ToRender /> :
+          <div>No Diagram Yet!</div>
+        }
         <div
           className="font-medium text-black text-center border-[1px] border-gray-300 text-[12px] p-1 rounded select-none
           hover:border-black grow-0"
